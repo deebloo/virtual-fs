@@ -1,6 +1,6 @@
 import { VirtualFs } from './virtual-fs';
 
-describe('FakeFs', () => {
+describe('VirtualFs', () => {
   it('should add paths', () => {
     const fs = new VirtualFs()
       .add('/foo/bar/first.template')
