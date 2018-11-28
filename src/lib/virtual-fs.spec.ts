@@ -61,6 +61,29 @@ describe('FakeFs', () => {
     ]);
   });
 
+  it('should correctly dedupe child list', () => {
+    const res = new VirtualFs()
+      .add('/foo/bar')
+      .add('/foo/bar/second.template')
+      .add('/foo/bar/third.template')
+      .add('/foo/fourth.template/bar')
+      .add('/hello/baz/fourth.template')
+      .getChildren('/foo');
+
+    expect(res).toEqual([
+      {
+        fullPath: '/foo/bar',
+        name: 'bar',
+        parent: 'foo'
+      },
+      {
+        fullPath: '/foo/fourth.template/bar',
+        name: 'fourth.template',
+        parent: 'foo'
+      }
+    ]);
+  });
+
   it('should correctly map over the fs', () => {
     const res = new VirtualFs<number>()
       .add('/first', 1)

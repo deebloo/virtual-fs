@@ -57,7 +57,7 @@ export class VirtualFs<T = any> {
     moveTo: string,
     config: UpdateConfig = { triggerObserve: true }
   ): VirtualFs<T> {
-    const children = this.getChildren(path);
+    const children = this.getChildPaths(path);
 
     if (this.contents.has(path)) {
       this.contents.set(moveTo, this.read(path));
@@ -66,12 +66,12 @@ export class VirtualFs<T = any> {
     }
 
     children.forEach(p => {
-      const parsed = p.fullPath.split(path);
+      const parsed = p.split(path);
       const newPath = moveTo + parsed[parsed.length - 1];
 
-      this.contents.set(newPath, this.read(p.fullPath));
+      this.contents.set(newPath, this.read(p));
 
-      this.contents.delete(p.fullPath);
+      this.contents.delete(p);
     });
 
     if (config.triggerObserve) {
@@ -103,15 +103,17 @@ export class VirtualFs<T = any> {
     return Array.from(this.contents.values());
   }
 
-  getRoot(): PathQueryRes[] {
-    return this.getChildren('');
+  getRoot(): string[] {
+    return this.getChildPaths('');
+  }
+
+  getChildPaths(path: string): string[] {
+    return this.getPaths().filter(p => p.startsWith(path) && p !== path);
   }
 
   getChildren(path: string): PathQueryRes[] {
     return (
-      this.getPaths()
-        // find paths
-        .filter(p => p.startsWith(path) && p !== path)
+      this.getChildPaths(path)
         // map results to a PathQueryRes
         .map(fullPath => {
           const name = fullPath.split(path)[1].split('/')[1];
