@@ -4,11 +4,6 @@ export interface UpdateConfig {
   triggerObserve?: boolean;
 }
 
-export interface PathQueryRes {
-  name: string;
-  parent: string;
-}
-
 export class VirtualFs<T = any> {
   readonly observe: BehaviorSubject<VirtualFs> = new BehaviorSubject<VirtualFs>(
     this
@@ -110,19 +105,14 @@ export class VirtualFs<T = any> {
     return this.getPaths().filter(p => p.startsWith(path) && p !== path);
   }
 
-  queryChildren(path: string): PathQueryRes[] {
+  getChildNames(path: string): string[] {
     return (
       this.getChildPaths(path)
-        // map results to a PathQueryRes
-        .map(fullPath => {
-          const name = fullPath.split(path)[1].split('/')[1];
-          const parent = fullPath.split('/');
-
-          return { name, parent: parent[parent.indexOf(name) - 1] };
-        })
+        // Find the first child
+        .map(fullPath => fullPath.split(path)[1].split('/')[1])
         // Dedupe the list
-        .reduce((final: PathQueryRes[], pathRef) => {
-          if (!final.find(ref => ref.name === pathRef.name)) {
+        .reduce((final: string[], pathRef) => {
+          if (final.indexOf(pathRef)) {
             final.push(pathRef);
           }
 

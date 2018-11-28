@@ -38,46 +38,31 @@ describe('VirtualFs', () => {
     expect(res).toEqual(['/foo/baz/fourth.template']);
   });
 
-  it('should get all children for a given path', () => {
+  it('should get all child paths for a given path', () => {
     const res = new VirtualFs()
       .add('/foo/bar')
       .add('/foo/bar/second.template')
       .add('/foo/bar/third.template')
       .add('/foo/fourth.template/bar')
       .add('/hello/baz/fourth.template')
-      .queryChildren('/foo/bar');
+      .getChildPaths('/foo/bar');
 
     expect(res).toEqual([
-      {
-        name: 'second.template',
-        parent: 'bar'
-      },
-      {
-        name: 'third.template',
-        parent: 'bar'
-      }
+      '/foo/bar/second.template',
+      '/foo/bar/third.template'
     ]);
   });
 
-  it('should correctly dedupe child list', () => {
+  it('should get all immediate child names', () => {
     const res = new VirtualFs()
       .add('/foo/bar')
       .add('/foo/bar/second.template')
       .add('/foo/bar/third.template')
       .add('/foo/fourth.template/bar')
       .add('/hello/baz/fourth.template')
-      .queryChildren('/foo');
+      .getChildNames('/foo');
 
-    expect(res).toEqual([
-      {
-        name: 'bar',
-        parent: 'foo'
-      },
-      {
-        name: 'fourth.template',
-        parent: 'foo'
-      }
-    ]);
+    expect(res).toEqual(['bar', 'fourth.template']);
   });
 
   it('should correctly map over the fs', () => {
