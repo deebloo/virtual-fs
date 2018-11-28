@@ -4,7 +4,7 @@ export interface UpdateConfig {
   triggerObserve?: boolean;
 }
 
-export interface PathRef {
+export interface PathQueryRes {
   fullPath: string;
   name: string;
   parent: string;
@@ -91,7 +91,7 @@ export class VirtualFs<T = any> {
     return this;
   }
 
-  read(path: string) {
+  read(path: string): T {
     return this.contents.get(path) as T;
   }
 
@@ -103,26 +103,31 @@ export class VirtualFs<T = any> {
     return Array.from(this.contents.values());
   }
 
-  getRoot(): PathRef[] {
+  getRoot(): PathQueryRes[] {
     return this.getChildren('');
   }
 
-  getChildren(path: string): PathRef[] {
-    return this.getPaths()
-      .filter(p => p.startsWith(path) && p !== path)
-      .map(fullPath => {
-        const name = fullPath.split(path)[1].split('/')[1];
-        const parent = fullPath.split('/');
+  getChildren(path: string): PathQueryRes[] {
+    return (
+      this.getPaths()
+        // find paths
+        .filter(p => p.startsWith(path) && p !== path)
+        // map results to a PathQueryRes
+        .map(fullPath => {
+          const name = fullPath.split(path)[1].split('/')[1];
+          const parent = fullPath.split('/');
 
-        return { fullPath, name, parent: parent[parent.indexOf(name) - 1] };
-      })
-      .reduce((final: PathRef[], pathRef) => {
-        if (!final.find(ref => ref.name === pathRef.name)) {
-          final.push(pathRef);
-        }
+          return { fullPath, name, parent: parent[parent.indexOf(name) - 1] };
+        })
+        // Dedupe the list
+        .reduce((final: PathQueryRes[], pathRef) => {
+          if (!final.find(ref => ref.name === pathRef.name)) {
+            final.push(pathRef);
+          }
 
-        return final;
-      }, []);
+          return final;
+        }, [])
+    );
   }
 
   map<R>(fn: (res: T, path: string) => R): VirtualFs<R> {
