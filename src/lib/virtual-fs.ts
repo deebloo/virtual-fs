@@ -5,7 +5,6 @@ export interface UpdateConfig {
 }
 
 export interface PathQueryRes {
-  fullPath: string;
   name: string;
   parent: string;
 }
@@ -119,7 +118,7 @@ export class VirtualFs<T = any> {
           const name = fullPath.split(path)[1].split('/')[1];
           const parent = fullPath.split('/');
 
-          return { fullPath, name, parent: parent[parent.indexOf(name) - 1] };
+          return { name, parent: parent[parent.indexOf(name) - 1] };
         })
         // Dedupe the list
         .reduce((final: PathQueryRes[], pathRef) => {
