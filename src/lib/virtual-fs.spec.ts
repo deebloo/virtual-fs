@@ -45,16 +45,14 @@ describe('FakeFs', () => {
       .add('/foo/bar/third.template')
       .add('/foo/fourth.template/bar')
       .add('/hello/baz/fourth.template')
-      .getChildren('/foo/bar');
+      .queryChildren('/foo/bar');
 
     expect(res).toEqual([
       {
-        fullPath: '/foo/bar/second.template',
         name: 'second.template',
         parent: 'bar'
       },
       {
-        fullPath: '/foo/bar/third.template',
         name: 'third.template',
         parent: 'bar'
       }
@@ -68,16 +66,14 @@ describe('FakeFs', () => {
       .add('/foo/bar/third.template')
       .add('/foo/fourth.template/bar')
       .add('/hello/baz/fourth.template')
-      .getChildren('/foo');
+      .queryChildren('/foo');
 
     expect(res).toEqual([
       {
-        fullPath: '/foo/bar',
         name: 'bar',
         parent: 'foo'
       },
       {
-        fullPath: '/foo/fourth.template/bar',
         name: 'fourth.template',
         parent: 'foo'
       }

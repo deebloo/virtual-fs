@@ -110,7 +110,7 @@ export class VirtualFs<T = any> {
     return this.getPaths().filter(p => p.startsWith(path) && p !== path);
   }
 
-  getChildren(path: string): PathQueryRes[] {
+  queryChildren(path: string): PathQueryRes[] {
     return (
       this.getChildPaths(path)
         // map results to a PathQueryRes
