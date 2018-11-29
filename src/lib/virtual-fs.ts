@@ -106,19 +106,16 @@ export class VirtualFs<T = any> {
   }
 
   getChildNames(path: string): string[] {
-    return (
-      this.getChildPaths(path)
-        // Find the first child
-        .map(fullPath => fullPath.split(path)[1].split('/')[1])
+    return this.getChildPaths(path)
+      .map(fullPath => fullPath.split(path)[1].split('/')[1]) // Find the first child
+      .reduce((final: string[], pathRef) => {
         // Dedupe the list
-        .reduce((final: string[], pathRef) => {
-          if (final.indexOf(pathRef)) {
-            final.push(pathRef);
-          }
+        if (final.indexOf(pathRef)) {
+          final.push(pathRef);
+        }
 
-          return final;
-        }, [])
-    );
+        return final;
+      }, []);
   }
 
   map<R>(fn: (res: T, path: string) => R): VirtualFs<R> {
