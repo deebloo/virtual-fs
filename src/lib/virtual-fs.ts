@@ -110,7 +110,7 @@ export class VirtualFs<T = any> {
       .map(fullPath => fullPath.split(path)[1].split('/')[1]) // Find the first child
       .reduce((final: string[], pathRef) => {
         // Dedupe the list
-        if (final.indexOf(pathRef)) {
+        if (final.indexOf(pathRef) <= -1) {
           final.push(pathRef);
         }
 
