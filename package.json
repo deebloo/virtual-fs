@@ -1,17 +1,14 @@
 {
   "name": "virtual-fs",
   "version": "1.0.0",
-  "ngPackage": {
-    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
-    "lib": {
-      "entryFile": "src/public_api.ts"
-    }
-  },
+  "type": "module",
+  "main": "target/lib.js",
+  "module": "target/lib.js",
   "description": "A file system type interface for dealing with nested values by path",
   "scripts": {
-    "test": "jest --watchAll --verbose=false",
+    "test": "tsc && ava target/**/*.spec.js",
     "test:ci": "jest",
-    "build": "ng-packagr -p package.json"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -23,16 +20,9 @@
     "url": "https://github.com/deebloo/drill/issues"
   },
   "devDependencies": {
-    "@angular/compiler": "^7.0.4",
-    "@angular/compiler-cli": "^7.0.4",
-    "@angular/core": "^7.0.4",
-    "@types/jest": "^23.3.9",
-    "jest": "^23.6.0",
-    "ng-packagr": "^4.4.0",
+    "ava": "4.0.0-alpha.2",
     "prettier": "^1.15.2",
     "rxjs": "^6.3.3",
-    "ts-jest": "^23.10.4",
-    "tsickle": "^0.34.0",
     "typescript": "^3.1.6"
   },
   "peerDependency": {

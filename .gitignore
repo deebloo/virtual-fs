@@ -10,6 +10,7 @@
 /apps/anteo-native/plugins
 /apps/anteo-native/node_modules
 /apps/anteo-native/www
+/target
 
 
 # dependencies

@@ -1,150 +1,144 @@
-import { VirtualFs } from './virtual-fs';
+import test from 'ava';
 
-describe('VirtualFs', () => {
-  it('should add paths', () => {
-    const fs = new VirtualFs()
-      .add('/foo/bar/first.template')
-      .add('/foo/bar/second.template')
-      .add('/foo/bar/third.template');
+import { VirtualFs } from './virtual-fs.js';
 
-    expect(fs.getPaths().length).toBe(3);
+test('should add paths', t => {
+  const fs = new VirtualFs()
+    .add('/foo/bar/first.template')
+    .add('/foo/bar/second.template')
+    .add('/foo/bar/third.template');
 
-    fs.add('/foo/bar/baz/fourth.template');
+  t.is(fs.getPaths().length, 3);
 
-    expect(fs.getPaths().length).toBe(4);
+  fs.add('/foo/bar/baz/fourth.template');
+
+  t.is(fs.getPaths().length, 4);
+});
+
+test('should remove a single path', t => {
+  const fs = new VirtualFs()
+    .add('/foo/bar/first.template')
+    .add('/foo/bar/second.template')
+    .add('/foo/bar/third.template')
+    .add('/foo/bar/baz/fourth.template')
+    .remove('/foo/bar/first.template');
+
+  t.is(fs.getPaths().length, 3);
+});
+
+test('should remove a path and all children', t => {
+  const res = new VirtualFs()
+    .add('/foo/bar/first.template')
+    .add('/foo/bar/second.template')
+    .add('/foo/bar/third.template')
+    .add('/foo/baz/fourth.template')
+    .remove('/foo/bar')
+    .getPaths();
+
+  t.is(res.length, 1);
+
+  t.deepEqual(res, ['/foo/baz/fourth.template']);
+});
+
+test('should get all child paths for a given path', t => {
+  const res = new VirtualFs()
+    .add('/foo/bar')
+    .add('/foo/bar/second.template')
+    .add('/foo/bar/third.template')
+    .add('/foo/fourth.template/bar')
+    .add('/hello/baz/fourth.template')
+    .getChildPaths('/foo/bar');
+
+  t.deepEqual(res, ['/foo/bar/second.template', '/foo/bar/third.template']);
+});
+
+test('should get all immediate child names', t => {
+  const res = new VirtualFs()
+    .add('/foo/bar')
+    .add('/foo/bar/second.template')
+    .add('/foo/bar/third.template')
+    .add('/foo/fourth.template/bar')
+    .add('/hello/baz/fourth.template')
+    .getChildNames('/foo');
+
+  t.deepEqual(res, ['bar', 'fourth.template']);
+});
+
+test('should correctly map over the fs', t => {
+  const res = new VirtualFs<number>()
+    .add('/first', 1)
+    .add('/second', 2)
+    .add('/third', 3)
+    .add('/fourth', 4)
+    .map(item => item * 2);
+
+  t.is(res.read('/first'), 2);
+  t.is(res.read('/second'), 4);
+  t.is(res.read('/third'), 6);
+  t.is(res.read('/fourth'), 8);
+});
+
+test('should correctly filter the files', t => {
+  const res = new VirtualFs<number>()
+    .add('/first', 1)
+    .add('/second', 2)
+    .add('/third', 3)
+    .add('/fourth', 4)
+    .filter(item => item % 2 !== 0);
+
+  t.is(res.size, 2);
+  t.is(res.read('/first'), 1);
+  // t.is(res.read('/second'), undefined);
+  t.is(res.read('/third'), 3);
+  // t.is(res.read('/fourth'), undefined);
+});
+
+test('should move a key with no children', t => {
+  const res = new VirtualFs<number>()
+    .add('/hello', 100)
+    .add('/foo/bar/first', 0)
+    .add('/foo/bar/second', 1)
+    .add('/foo/baz/third', 2)
+    .move('/hello', '/goodbye');
+
+  t.deepEqual(res.getPaths(), [
+    '/foo/bar/first',
+    '/foo/bar/second',
+    '/foo/baz/third',
+    '/goodbye'
+  ]);
+
+  t.is(res.read('/goodbye'), 100);
+});
+
+test('should move a key and all its children to a new location', t => {
+  const res = new VirtualFs<number>()
+    .add('/foo/bar/first', 0)
+    .add('/foo/bar/second', 1)
+    .add('/foo/baz/third', 2)
+    .move('/foo/bar', '/baz');
+
+  t.deepEqual(res.getPaths(), ['/foo/baz/third', '/baz/first', '/baz/second']);
+
+  t.is(res.read('/foo/baz/third'), 2);
+  t.is(res.read('/baz/first'), 0);
+  t.is(res.read('/baz/second'), 1);
+});
+
+test('should observe when changes are made', t => {
+  let counter = 0;
+
+  const res = new VirtualFs<number>();
+
+  res.observe.subscribe(() => {
+    counter++;
   });
 
-  it('should remove a single path', () => {
-    const fs = new VirtualFs()
-      .add('/foo/bar/first.template')
-      .add('/foo/bar/second.template')
-      .add('/foo/bar/third.template')
-      .add('/foo/bar/baz/fourth.template')
-      .remove('/foo/bar/first.template');
+  res
+    .add('/foo/bar/first', 0)
+    .add('/foo/bar/second', 1)
+    .add('/foo/baz/third', 2)
+    .move('/foo/bar', '/baz');
 
-    expect(fs.getPaths().length).toBe(3);
-  });
-
-  it('should remove a path and all children', () => {
-    const res = new VirtualFs()
-      .add('/foo/bar/first.template')
-      .add('/foo/bar/second.template')
-      .add('/foo/bar/third.template')
-      .add('/foo/baz/fourth.template')
-      .remove('/foo/bar')
-      .getPaths();
-
-    expect(res.length).toBe(1);
-    expect(res).toEqual(['/foo/baz/fourth.template']);
-  });
-
-  it('should get all child paths for a given path', () => {
-    const res = new VirtualFs()
-      .add('/foo/bar')
-      .add('/foo/bar/second.template')
-      .add('/foo/bar/third.template')
-      .add('/foo/fourth.template/bar')
-      .add('/hello/baz/fourth.template')
-      .getChildPaths('/foo/bar');
-
-    expect(res).toEqual([
-      '/foo/bar/second.template',
-      '/foo/bar/third.template'
-    ]);
-  });
-
-  it('should get all immediate child names', () => {
-    const res = new VirtualFs()
-      .add('/foo/bar')
-      .add('/foo/bar/second.template')
-      .add('/foo/bar/third.template')
-      .add('/foo/fourth.template/bar')
-      .add('/hello/baz/fourth.template')
-      .getChildNames('/foo');
-
-    expect(res).toEqual(['bar', 'fourth.template']);
-  });
-
-  it('should correctly map over the fs', () => {
-    const res = new VirtualFs<number>()
-      .add('/first', 1)
-      .add('/second', 2)
-      .add('/third', 3)
-      .add('/fourth', 4)
-      .map(item => item * 2);
-
-    expect(res.read('/first')).toBe(2);
-    expect(res.read('/second')).toBe(4);
-    expect(res.read('/third')).toBe(6);
-    expect(res.read('/fourth')).toBe(8);
-  });
-
-  it('should correctly filter the files', () => {
-    const res = new VirtualFs<number>()
-      .add('/first', 1)
-      .add('/second', 2)
-      .add('/third', 3)
-      .add('/fourth', 4)
-      .filter(item => item % 2 !== 0);
-
-    expect(res.size).toBe(2);
-    expect(res.read('/first')).toBe(1);
-    expect(res.read('/second')).toBeFalsy();
-    expect(res.read('/third')).toBe(3);
-    expect(res.read('/fourth')).toBeFalsy();
-  });
-
-  it('should move a key with no children', () => {
-    const res = new VirtualFs<number>()
-      .add('/hello', 100)
-      .add('/foo/bar/first', 0)
-      .add('/foo/bar/second', 1)
-      .add('/foo/baz/third', 2)
-      .move('/hello', '/goodbye');
-
-    expect(res.getPaths()).toEqual([
-      '/foo/bar/first',
-      '/foo/bar/second',
-      '/foo/baz/third',
-      '/goodbye'
-    ]);
-
-    expect(res.read('/goodbye')).toBe(100);
-  });
-
-  it('should move a key and all its children to a new location', () => {
-    const res = new VirtualFs<number>()
-      .add('/foo/bar/first', 0)
-      .add('/foo/bar/second', 1)
-      .add('/foo/baz/third', 2)
-      .move('/foo/bar', '/baz');
-
-    expect(res.getPaths()).toEqual([
-      '/foo/baz/third',
-      '/baz/first',
-      '/baz/second'
-    ]);
-
-    expect(res.read('/foo/baz/third')).toBe(2);
-    expect(res.read('/baz/first')).toBe(0);
-    expect(res.read('/baz/second')).toBe(1);
-  });
-
-  it('should observe when changes are made', () => {
-    let counter = 0;
-
-    const res = new VirtualFs<number>();
-
-    res.observe.subscribe(() => {
-      counter++;
-    });
-
-    res
-      .add('/foo/bar/first', 0)
-      .add('/foo/bar/second', 1)
-      .add('/foo/baz/third', 2)
-      .move('/foo/bar', '/baz');
-
-    expect(counter).toBe(5);
-  });
+  t.is(counter, 5);
 });
