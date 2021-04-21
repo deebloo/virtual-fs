@@ -88,9 +88,9 @@ test('should correctly filter the files', t => {
 
   t.is(res.size, 2);
   t.is(res.read('/first'), 1);
-  // t.is(res.read('/second'), undefined);
+  t.is(res.read('/second'), undefined);
   t.is(res.read('/third'), 3);
-  // t.is(res.read('/fourth'), undefined);
+  t.is(res.read('/fourth'), undefined);
 });
 
 test('should move a key with no children', t => {

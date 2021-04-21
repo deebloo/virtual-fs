@@ -54,7 +54,7 @@ export class VirtualFs<T = any> {
     const children = this.getChildPaths(path);
 
     if (this.contents.has(path)) {
-      this.contents.set(moveTo, this.read(path));
+      this.contents.set(moveTo, this.read(path) as T);
 
       this.contents.delete(path);
     }
@@ -63,7 +63,7 @@ export class VirtualFs<T = any> {
       const parsed = p.split(path);
       const newPath = moveTo + parsed[parsed.length - 1];
 
-      this.contents.set(newPath, this.read(p));
+      this.contents.set(newPath, this.read(p) as T);
 
       this.contents.delete(p);
     });
@@ -85,8 +85,8 @@ export class VirtualFs<T = any> {
     return this;
   }
 
-  read(path: string): T {
-    return this.contents.get(path) as T;
+  read(path: string) {
+    return this.contents.get(path);
   }
 
   getPaths(): string[] {
@@ -118,6 +118,9 @@ export class VirtualFs<T = any> {
       }, []);
   }
 
+  /**
+   * Maps over all content of the fs and returns a new VirtualFs instance
+   */
   map<R>(fn: (res: T, path: string) => R): VirtualFs<R> {
     const res = new VirtualFs<R>();
 
@@ -127,7 +130,7 @@ export class VirtualFs<T = any> {
 
     return res;
   }
-
+  
   filter(fn: (res: T, path: string) => boolean): VirtualFs<T> {
     const res = new VirtualFs<T>();
 
