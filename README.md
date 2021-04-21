@@ -1,4 +1,4 @@
-# VirtualFs [![CircleCI](https://circleci.com/gh/deebloo/virtual-fs.svg?style=svg)](https://circleci.com/gh/deebloo/virtual-fs)
+# VirtualFs
 
 A file system type interface for dealing with nested values by path
 
