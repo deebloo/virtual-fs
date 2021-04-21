@@ -9,7 +9,7 @@ npm i simple-virtual-fs
 #### Example:
 
 ````TS
-import { VirtualFs } from 'virtual-fs';
+import { VirtualFs } from 'simple-virtual-fs';
 
 const fs = new VirtualFs<number>()
   .add('/foo/first', 1)
