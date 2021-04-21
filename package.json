@@ -1,6 +1,6 @@
 {
-  "name": "simple-vfs",
-  "version": "1.0.0",
+  "name": "simple-virtual-fs-2",
+  "version": "1.0.1",
   "type": "module",
   "main": "target/lib.js",
   "module": "target/lib.js",
@@ -30,5 +30,8 @@
   },
   "peerDependency": {
     "rxjs": "6.6.7"
+  },
+  "dependencies": {
+    "simple-virtual-fs": "^1.0.1"
   }
 }

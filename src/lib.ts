@@ -1,1 +1,1 @@
-export { VirtualFs } from './lib/virtual-fs';
+export { VirtualFs } from './lib/virtual-fs.js';

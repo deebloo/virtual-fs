@@ -1,10 +1,14 @@
-# VirtualFs
+# simple-virtual-fs
 
 A file system type interface for dealing with nested values by path
 
+```BASH
+npm i simple-virtual-fs
+```
+
 #### Example:
 
-```TS
+````TS
 import { VirtualFs } from 'virtual-fs';
 
 const fs = new VirtualFs<number>()
@@ -20,9 +24,7 @@ res.forEach(path => {
   console.log(fs.read(path)) //  2 -> 4 -> 6
 });
 
-```
-
-Observe Changes.
+```Observe Changes.
 
 ```TS
 import { VirtualFs } from 'virtual-fs';
@@ -38,4 +40,4 @@ fs.add('/foo/first', 1)
   .add('/foo/third', 3)
   .add('/bar/fourth', 4);
 
-```
+````
