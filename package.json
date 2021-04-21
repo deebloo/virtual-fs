@@ -4,6 +4,9 @@
   "type": "module",
   "main": "target/lib.js",
   "module": "target/lib.js",
+  "files": [
+    "target"
+  ],
   "description": "A file system type interface for dealing with nested values by path",
   "scripts": {
     "test": "tsc && ava target/**/*.spec.js",
@@ -14,7 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/deebloo/drill.git"
   },
-  "author": "",
+  "author": "deebloo",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/deebloo/drill/issues"
