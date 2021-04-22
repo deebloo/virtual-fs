@@ -8,7 +8,7 @@ npm i simple-virtual-fs
 
 #### Example:
 
-````TS
+```TS
 import { VirtualFs } from 'simple-virtual-fs';
 
 const fs = new VirtualFs<number>()
@@ -23,8 +23,9 @@ const res = fs.getChildren('/foo'); // ['/foo/first', '/foo/second', '/foo/third
 res.forEach(path => {
   console.log(fs.read(path)) //  2 -> 4 -> 6
 });
+```
 
-```Observe Changes.
+### Observe Changes.
 
 ```TS
 import { VirtualFs } from 'virtual-fs';
@@ -40,4 +41,4 @@ fs.add('/foo/first', 1)
   .add('/foo/third', 3)
   .add('/bar/fourth', 4);
 
-````
+```
