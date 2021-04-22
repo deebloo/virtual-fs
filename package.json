@@ -1,9 +1,10 @@
 {
   "name": "simple-virtual-fs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "target/lib.js",
   "module": "target/lib.js",
+  "types": "target/lib.d.ts",
   "files": [
     "target"
   ],
