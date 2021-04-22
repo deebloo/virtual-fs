@@ -1,5 +1,5 @@
 {
-  "name": "simple-virtual-fs-2",
+  "name": "simple-virtual-fs",
   "version": "1.0.1",
   "type": "module",
   "main": "target/lib.js",
