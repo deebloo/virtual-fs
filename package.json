@@ -10,7 +10,6 @@
   "description": "A file system type interface for dealing with nested values by path",
   "scripts": {
     "test": "tsc && ava target/**/*.spec.js",
-    "test:ci": "jest",
     "build": "tsc"
   },
   "repository": {
